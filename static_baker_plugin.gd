@@ -3,6 +3,7 @@ extends EditorPlugin
 
 const static_baker_group_const = preload("static_baker_group.gd")
 
+var editor_interface = null
 var button = null
 var selected_node = null
 
@@ -17,7 +18,7 @@ func update_button_label():
 func _process_static_baker_group():
 	if(selected_node):
 		if(selected_node.get_script() == static_baker_group_const):
-			selected_node.toggle_group()
+			selected_node.toggle_group(editor_interface)
 			update_button_label()
 
 func handles(p_object):
@@ -41,17 +42,19 @@ func _init():
 	print("Setting up Static Baker plugin")
 	
 func _enter_tree():
+	editor_interface = get_editor_interface()
+	
 	button = Button.new()
-	button.set_button_icon(get_base_control().get_icon("BakedLight", "EditorIcons"))
+	button.set_button_icon(editor_interface.get_base_control().get_icon("BakedLight", "EditorIcons"))
 	button.set_tooltip("Convert collection of static meshes into a single mesh.")
 	button.connect("pressed", self, "_process_static_baker_group")
 	
 	button.hide()
 	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, button)
 
-	add_custom_type("StaticBakerGroup", "Position3D", static_baker_group_const, get_base_control().get_icon("BakedLightInstance", "EditorIcons"))
+	add_custom_type("StaticBakerGroup", "Position3D", static_baker_group_const, editor_interface.get_base_control().get_icon("BakedLightInstance", "EditorIcons"))
 
 func _exit_tree():
+	editor_interface = null
 	button.free()
-
 	remove_custom_type("StaticBakerGroup")
