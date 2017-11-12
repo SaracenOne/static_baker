@@ -2,6 +2,7 @@ tool
 extends EditorPlugin
 
 const static_baker_group_const = preload("static_baker_group.gd")
+const material_replacer_const = preload("material_replacer.gd")
 
 var editor_interface = null
 var button = null
@@ -22,7 +23,12 @@ func _process_static_baker_group():
 			update_button_label()
 
 func handles(p_object):
-	return p_object.get_script() == static_baker_group_const
+	if p_object is Node:
+		var is_top_level = p_object.get_owner() == null
+		var is_external = p_object.get_filename() != ""
+		return p_object.get_script() == static_baker_group_const and (is_top_level or !is_external)
+	
+	return false
 	
 func make_visible(p_visible):
 	if button:
@@ -53,6 +59,7 @@ func _enter_tree():
 	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, button)
 
 	add_custom_type("StaticBakerGroup", "Position3D", static_baker_group_const, editor_interface.get_base_control().get_icon("BakedLightInstance", "EditorIcons"))
+	add_custom_type("MaterialReplacer", "Resource", material_replacer_const, null)
 
 func _exit_tree():
 	editor_interface = null
