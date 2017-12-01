@@ -58,10 +58,11 @@ func _enter_tree():
 	button.hide()
 	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, button)
 
-	add_custom_type("StaticBakerGroup", "Position3D", static_baker_group_const, editor_interface.get_base_control().get_icon("BakedLightInstance", "EditorIcons"))
+	add_custom_type("StaticBakerGroup", "Spatial", static_baker_group_const, editor_interface.get_base_control().get_icon("BakedLightInstance", "EditorIcons"))
 	add_custom_type("MaterialReplacer", "Resource", material_replacer_const, null)
 
 func _exit_tree():
 	editor_interface = null
 	button.free()
 	remove_custom_type("StaticBakerGroup")
+	remove_custom_type("MaterialReplacer")

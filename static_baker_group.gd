@@ -7,12 +7,67 @@ const extended_static_body_const = preload("res://addons/extended_static_body/ex
 
 export(Array) var original_instances = []
 export(Dictionary) var surface_type_overrides = {}
-export(Resource) var material_replacer = null setget set_material_replacer
+var material_replacer_count = 0# setget set_material_replacer_count
+var material_replacers = []
 
 export(bool) var use_vertex_compression = false
 export(bool) var combine_child_materials = false
 export(bool) var unique_materials = false
 export(bool) var use_multiple_lightmaps = false
+
+func set_material_replacer_count(p_count):
+	var initial_count = material_replacer_count
+	material_replacer_count = p_count
+	
+	if material_replacer_count != initial_count:
+		material_replacers.resize(material_replacer_count)
+	
+	property_list_changed_notify()
+
+func set_material_replacer(p_idx, p_material_replacer):
+	if (p_idx >= material_replacers.size() || p_idx < 0):
+		return
+		
+	if p_material_replacer and p_material_replacer is material_replacer_const:
+		material_replacers[p_idx] = p_material_replacer
+	else:
+		material_replacers[p_idx] = null
+	property_list_changed_notify()
+	
+	execute_material_replacers()
+
+func _get_property_list():
+	var property_list = []
+	
+	property_list.push_back({"name":"material_replacers/count", "type":TYPE_INT, "hint":PROPERTY_HINT_NONE})
+	for i in range(0, material_replacer_count):
+		property_list.push_back({"name":"material_replacers/" + str(i) + "/material_replacer", "type": TYPE_OBJECT, "hint": PROPERTY_HINT_RESOURCE_TYPE,"hint_string":"MaterialReplacer"})
+		
+	return property_list
+	
+func _set(p_property, p_value):
+	if (p_property.begins_with("material_replacers/")):
+		var split_property = p_property.split("/")
+		if split_property.size() > 1:
+			if split_property[1] == "count":
+				set_material_replacer_count(p_value)
+			else:
+				var idx = split_property[1].to_int()
+				if (idx < material_replacers.size() || idx >= 0):
+					if split_property.size() == 3 and split_property[2] == "material_replacer":
+						set_material_replacer(idx, p_value)
+	
+func _get(p_property):
+	if (p_property.begins_with("material_replacers/")):
+		var split_property = p_property.split("/")
+		if split_property.size() > 1:
+			if split_property[1] == "count":
+				return material_replacer_count
+			else:
+				var idx = split_property[1].to_int()
+				if (idx < material_replacers.size() || idx >= 0):
+					if split_property.size() == 3 and split_property[2] == "material_replacer":
+						return material_replacers[idx]
 
 func replace_materials(p_material_replacers, p_instances):
 	var mesh_instances = p_instances.mesh_instances
@@ -28,27 +83,15 @@ func replace_materials(p_material_replacers, p_instances):
 					mesh_instance.set_surface_material(i, null)
 					var mesh_material = mesh.surface_get_material(i)
 					
-					if p_material_replacers != null:
-						for material_replacer in p_material_replacers:
-							if material_replacer is material_replacer_const:
-								for material_swap in material_replacer.material_swaps:
-									if mesh_material == material_swap.original_material:
-										mesh_instance.set_surface_material(i, material_swap.replacement_material)
-										break
+					for material_replacer in p_material_replacers:
+						if material_replacer is material_replacer_const:
+							for material_swap in material_replacer.material_swaps:
+								if mesh_material == material_swap.original_material:
+									mesh_instance.set_surface_material(i, material_swap.replacement_material)
+									break
 
-func execute_material_replacer():
-	if material_replacer:
-		replace_materials([material_replacer], process_child_instances(self, {"mesh_instances":[], "static_bodies":[]}, null, get_script(), false, false))
-	else:
-		replace_materials(null, process_child_instances(self, {"mesh_instances":[], "static_bodies":[]}, null, get_script(), false, false))
-
-func set_material_replacer(p_material_replacer):
-	if p_material_replacer and p_material_replacer is material_replacer_const:
-		material_replacer = p_material_replacer
-	else:
-		material_replacer = null
-	
-	execute_material_replacer()
+func execute_material_replacers():
+	replace_materials(material_replacers, process_child_instances(self, {"mesh_instances":[], "static_bodies":[]}, null, get_script(), false, false))
 
 func restore_backup(p_editor_interface):
 	destroy_children()
@@ -61,7 +104,7 @@ func restore_backup(p_editor_interface):
 		if p_editor_interface:
 			instanced_scene.set_owner(p_editor_interface.get_edited_scene_root())
 	original_instances = []
-	execute_material_replacer()
+	execute_material_replacers()
 	property_list_changed_notify()
 
 func backup_children():
@@ -147,6 +190,7 @@ func combine_instances(p_editor_interface):
 			new_mesh_instance.set_owner(p_editor_interface.get_edited_scene_root())
 			
 	# Static bodies
+	
 	for saved_static_body in saved_static_bodies:
 		var instance = saved_static_body.instance
 		add_child(saved_static_body.instance)
@@ -158,7 +202,7 @@ func combine_instances(p_editor_interface):
 			for child in instance.get_children():
 				child.set_owner(p_editor_interface.get_edited_scene_root())
 				
-	execute_material_replacer()
+	execute_material_replacers()
 			
 func _ready():
 	if ProjectSettings.has_setting("static_baker/autobake_all") == false:
@@ -172,4 +216,4 @@ func _ready():
 			if ProjectSettings.get_setting("static_baker/autobake_all") == true:
 				combine_instances(null)
 	
-	execute_material_replacer()
+	execute_material_replacers()
