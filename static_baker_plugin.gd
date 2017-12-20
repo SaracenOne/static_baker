@@ -51,14 +51,14 @@ func _enter_tree():
 	editor_interface = get_editor_interface()
 	
 	button = Button.new()
-	button.set_button_icon(editor_interface.get_base_control().get_icon("BakedLight", "EditorIcons"))
+	button.set_button_icon(editor_interface.get_base_control().get_icon("BakedLightmap", "EditorIcons"))
 	button.set_tooltip("Convert collection of static meshes into a single mesh.")
 	button.connect("pressed", self, "_process_static_baker_group")
 	
 	button.hide()
 	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, button)
 
-	add_custom_type("StaticBakerGroup", "Spatial", static_baker_group_const, editor_interface.get_base_control().get_icon("BakedLightInstance", "EditorIcons"))
+	add_custom_type("StaticBakerGroup", "Spatial", static_baker_group_const, editor_interface.get_base_control().get_icon("BakedLightmap", "EditorIcons"))
 	add_custom_type("MaterialReplacer", "Resource", material_replacer_const, null)
 
 func _exit_tree():
