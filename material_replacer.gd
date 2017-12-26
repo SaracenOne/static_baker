@@ -49,7 +49,7 @@ func _set(p_property, p_value):
 								material_swaps[i] = MaterialSwap.new()
 						property_list_changed_notify()
 			elif(split_property[1].is_valid_integer() and split_property.size() == 3):
-				if p_value is Material:
+				if (p_value != null and p_value is Material) or p_value == null:
 					var index = split_property[1].to_int()
 					if index < material_swaps.size():
 						if split_property[2] == "original_material":

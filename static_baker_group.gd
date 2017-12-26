@@ -84,7 +84,7 @@ func replace_materials(p_material_replacers, p_instances):
 					var mesh_material = mesh.surface_get_material(i)
 					
 					for material_replacer in p_material_replacers:
-						if material_replacer is material_replacer_const:
+						if material_replacer != null and material_replacer is material_replacer_const:
 							for material_swap in material_replacer.material_swaps:
 								if mesh_material == material_swap.original_material:
 									mesh_instance.set_surface_material(i, material_swap.replacement_material)
