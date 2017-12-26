@@ -47,7 +47,7 @@ func _get_property_list():
 	
 func _set(p_property, p_value):
 	if (p_property.begins_with("material_replacers/")):
-		var split_property = p_property.split("/")
+		var split_property = p_property.split("/", -1)
 		if split_property.size() > 1:
 			if split_property[1] == "count":
 				set_material_replacer_count(p_value)
@@ -59,7 +59,7 @@ func _set(p_property, p_value):
 	
 func _get(p_property):
 	if (p_property.begins_with("material_replacers/")):
-		var split_property = p_property.split("/")
+		var split_property = p_property.split("/", -1)
 		if split_property.size() > 1:
 			if split_property[1] == "count":
 				return material_replacer_count

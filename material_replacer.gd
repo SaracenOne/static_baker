@@ -18,7 +18,7 @@ func _get_property_list():
 	return property_list
 
 func _get(p_property):
-	var split_property = p_property.split("/")
+	var split_property = p_property.split("/", -1)
 	if split_property.size() > 0:
 		if split_property[0] == "material_swap" and split_property.size() > 1:
 			if(split_property[1] == "count" and split_property.size() == 2):
@@ -35,7 +35,7 @@ func _get(p_property):
 		return material_swaps.size()
 
 func _set(p_property, p_value):
-	var split_property = p_property.split("/")
+	var split_property = p_property.split("/", -1)
 	if split_property.size() > 0:
 		if split_property[0] == "material_swap" and split_property.size() > 1:
 			if(split_property[1] == "count" and split_property.size() == 2):
