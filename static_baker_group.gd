@@ -3,17 +3,12 @@ tool
 
 const material_replacer_const = preload("material_replacer.gd")
 const mesh_combiner_const = preload("res://addons/mesh_combiner/mesh_combiner.gd")
-const extended_static_body_const = preload("res://addons/extended_static_body/extended_static_body.gd")
 
 export(Array) var original_instances = []
-export(Dictionary) var surface_type_overrides = {}
 var material_replacer_count = 0# setget set_material_replacer_count
 var material_replacers = []
 
 export(bool) var use_vertex_compression = false
-export(bool) var combine_child_materials = false
-export(bool) var unique_materials = false
-export(bool) var use_multiple_lightmaps = false
 
 func set_material_replacer_count(p_count):
 	var initial_count = material_replacer_count
@@ -160,9 +155,9 @@ func combine_instances(p_editor_interface):
 			
 	# Now combine them in the mesh combiner
 	for saved_mesh_instance in saved_mesh_instances:
-			print("Combining " + str(saved_mesh_instance.mesh.get_name() + "..."))
-			mesh_combiner.append_mesh(saved_mesh_instance.mesh, Vector2(0.0, 0.0), Vector2(1.0, 1.0), Vector2(0.0, 0.0), Vector2(1.0, 1.0), saved_mesh_instance.transform, 0.000001)
-			print("Done!")
+		print("Combining " + str(saved_mesh_instance.mesh.get_name() + "..."))
+		mesh_combiner.append_mesh(saved_mesh_instance.mesh, Vector2(0.0, 0.0), Vector2(1.0, 1.0), Vector2(0.0, 0.0), Vector2(1.0, 1.0), saved_mesh_instance.transform, PoolIntArray(), 0.000001)
+		print("Done!")
 			
 	# Save and unparent static bodies
 	for static_body in static_bodies:
