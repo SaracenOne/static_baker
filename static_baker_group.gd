@@ -71,9 +71,9 @@ func replace_materials(p_material_replacers, p_instances):
 		if mesh_instance is MeshInstance:
 			
 			var mesh = mesh_instance.mesh
-			var surface_count = mesh.get_surface_count()
 			
 			if mesh is ArrayMesh:
+				var surface_count = mesh.get_surface_count()
 				for i in range(0, surface_count):
 					mesh_instance.set_surface_material(i, null)
 					var mesh_material = mesh.surface_get_material(i)
@@ -84,6 +84,14 @@ func replace_materials(p_material_replacers, p_instances):
 								if mesh_material == material_swap.original_material:
 									mesh_instance.set_surface_material(i, material_swap.replacement_material)
 									break
+			elif mesh is PrimitiveMesh:
+				var mesh_material = mesh.material
+				for material_replacer in p_material_replacers:
+					if material_replacer != null and material_replacer is material_replacer_const:
+						for material_swap in material_replacer.material_swaps:
+							if mesh_material == material_swap.original_material:
+								mesh_instance.set_surface_material(0, material_swap.replacement_material)
+								break
 
 func execute_material_replacers():
 	replace_materials(material_replacers, process_child_instances(self, {"mesh_instances":[], "static_bodies":[]}, null, get_script(), false, false))
