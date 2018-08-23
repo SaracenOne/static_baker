@@ -8,6 +8,7 @@ export(Array) var original_instances = []
 var material_replacer_count = 0# setget set_material_replacer_count
 var material_replacers = []
 
+export(float) var weld_distance = 0.000001
 export(bool) var use_vertex_compression = false
 
 func set_material_replacer_count(p_count):
@@ -164,7 +165,7 @@ func combine_instances(p_editor_interface):
 	# Now combine them in the mesh combiner
 	for saved_mesh_instance in saved_mesh_instances:
 		print("Combining " + str(saved_mesh_instance.mesh.get_name() + "..."))
-		mesh_combiner.append_mesh(saved_mesh_instance.mesh, Vector2(0.0, 0.0), Vector2(1.0, 1.0), Vector2(0.0, 0.0), Vector2(1.0, 1.0), saved_mesh_instance.transform, PoolIntArray(), 0.000001)
+		mesh_combiner.append_mesh(saved_mesh_instance.mesh, Vector2(0.0, 0.0), Vector2(1.0, 1.0), Vector2(0.0, 0.0), Vector2(1.0, 1.0), saved_mesh_instance.transform, PoolIntArray(), weld_distance)
 		print("Done!")
 			
 	# Save and unparent static bodies
