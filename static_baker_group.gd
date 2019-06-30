@@ -21,7 +21,7 @@ func set_material_replacer_count(p_count : int) -> void:
 	
 	property_list_changed_notify()
 
-func set_material_replacer(p_idx : int, p_material_replacer : Array) -> void:
+func set_material_replacer(p_idx : int, p_material_replacer : material_replacer_const) -> void:
 	if (p_idx >= material_replacers.size() || p_idx < 0):
 		return
 		
