@@ -4,11 +4,11 @@ extends EditorPlugin
 const static_baker_group_const = preload("static_baker_group.gd")
 const material_replacer_const = preload("material_replacer.gd")
 
-var editor_interface = null
-var button = null
-var selected_node = null
+var editor_interface : EditorInterface = null
+var button : Button = null
+var selected_node : Node = null
 
-func update_button_label():
+func update_button_label() -> void:
 	if(selected_node.get_script() == static_baker_group_const):
 		if button:
 			if selected_node.original_instances.size() > 0:
@@ -16,13 +16,13 @@ func update_button_label():
 			else:
 				button.set_text("Pack Meshes")
 
-func _process_static_baker_group():
+func _process_static_baker_group() -> void:
 	if(selected_node):
 		if(selected_node.get_script() == static_baker_group_const):
 			selected_node.toggle_group(editor_interface)
 			update_button_label()
 
-func handles(p_object):
+func handles(p_object) -> bool:
 	if p_object is Node:
 		var is_top_level = p_object.get_owner() == null
 		var is_external = p_object.get_filename() != ""
@@ -30,7 +30,7 @@ func handles(p_object):
 	
 	return false
 	
-func make_visible(p_visible):
+func make_visible(p_visible : bool) -> void:
 	if button:
 		if (p_visible):
 			update_button_label()
@@ -38,16 +38,16 @@ func make_visible(p_visible):
 		else:
 			button.hide()
 
-func edit(p_object):
+func edit(p_object) -> void:
 	if(p_object == null || selected_node == p_object):
 		return
 		
 	selected_node = p_object
 
-func _init():
+func _init() -> void:
 	print("Setting up Static Baker plugin")
 	
-func _enter_tree():
+func _enter_tree() -> void:
 	editor_interface = get_editor_interface()
 	
 	button = Button.new()
@@ -59,6 +59,6 @@ func _enter_tree():
 	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, button)
 
 
-func _exit_tree():
+func _exit_tree() -> void:
 	editor_interface = null
 	button.free()
