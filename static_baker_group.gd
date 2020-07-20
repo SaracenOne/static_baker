@@ -38,7 +38,7 @@ func _get_property_list() -> Array:
 	
 	property_list.push_back({"name":"material_replacers/count", "type":TYPE_INT, "hint":PROPERTY_HINT_NONE})
 	for i in range(0, material_replacer_count):
-		property_list.push_back({"name":"material_replacers/" + str(i) + "/material_replacer", "type": TYPE_OBJECT, "hint": PROPERTY_HINT_RESOURCE_TYPE,"hint_string":"MaterialReplacer"})
+		property_list.push_back({"name":"material_replacers/%s/material_replacer" % str(i), "type": TYPE_OBJECT, "hint": PROPERTY_HINT_RESOURCE_TYPE,"hint_string":"MaterialReplacer"})
 		
 	return property_list
 	
@@ -151,7 +151,7 @@ func toggle_group(p_editor_interface : EditorInterface) -> void:
 		restore_backup(p_editor_interface)
 
 func combine_instances(p_editor_interface : EditorInterface) -> void:
-	print("Static baker group " + str(get_name() + " combining:"))
+	print("Static baker group %s combining" % get_name())
 	var valid_instances : Dictionary = process_child_instances(self, {"mesh_instances":[], "static_bodies":[]}, p_editor_interface, get_script(), true, true)
 	
 	var mesh_combiner : mesh_combiner_const = mesh_combiner_const.new()
@@ -168,7 +168,7 @@ func combine_instances(p_editor_interface : EditorInterface) -> void:
 			
 	# Now combine them in the mesh combiner
 	for saved_mesh_instance in saved_mesh_instances:
-		print("Combining " + str(saved_mesh_instance.mesh.get_name() + "..."))
+		print("Combining %s..." % saved_mesh_instance.mesh.get_name())
 		mesh_combiner.append_mesh(saved_mesh_instance.mesh, Vector2(0.0, 0.0), Vector2(1.0, 1.0), Vector2(0.0, 0.0), Vector2(1.0, 1.0), saved_mesh_instance.transform, PoolIntArray(), weld_distance)
 		print("Done!")
 			
@@ -213,15 +213,15 @@ func combine_instances(p_editor_interface : EditorInterface) -> void:
 	execute_material_replacers()
 			
 func _ready():
-	if ProjectSettings.has_setting("static_baker/autobake_all") == false:
+	if !ProjectSettings.has_setting("static_baker/autobake_all"):
 		ProjectSettings.set_setting("static_baker/autobake_all", false)
 	
 	if typeof(original_instances) != TYPE_ARRAY:
 		original_instances = []
 	
-	if Engine.is_editor_hint() == false:
+	if !Engine.is_editor_hint():
 		if original_instances.size() == 0:
-			if ProjectSettings.get_setting("static_baker/autobake_all") == true:
+			if ProjectSettings.get_setting("static_baker/autobake_all"):
 				combine_instances(null)
 	
 	execute_material_replacers()

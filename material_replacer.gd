@@ -13,8 +13,8 @@ func _get_property_list() -> Array:
 
 	property_list.push_back({"name":"material_swap/count", "type": TYPE_INT})
 	for i in range(0, material_swaps.size()):
-		property_list.push_back({"name":"material_swap/" + str(i) + "/original_material", "type": TYPE_OBJECT, "hint": PROPERTY_HINT_RESOURCE_TYPE,"hint_string":"Material"})
-		property_list.push_back({"name":"material_swap/" + str(i) + "/replacement_material", "type": TYPE_OBJECT, "hint": PROPERTY_HINT_RESOURCE_TYPE,"hint_string":"Material"})
+		property_list.push_back({"name":"material_swap/%s/original_material" % str(i), "type": TYPE_OBJECT, "hint": PROPERTY_HINT_RESOURCE_TYPE,"hint_string":"Material"})
+		property_list.push_back({"name":"material_swap/%s/replacement_material" % str(i), "type": TYPE_OBJECT, "hint": PROPERTY_HINT_RESOURCE_TYPE,"hint_string":"Material"})
 
 	return property_list
 
