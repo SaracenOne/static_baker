@@ -70,7 +70,7 @@ func _get(p_property : String):
 						return material_replacers[idx]
 
 func replace_materials(p_material_replacers : Array, p_instances : Dictionary) -> void:
-	var mesh_instances : Array = p_instances.mesh_instances
+	var mesh_instances : Array = p_instances["mesh_instances"]
 	
 	for mesh_instance in mesh_instances:
 		if mesh_instance is MeshInstance:
@@ -129,10 +129,10 @@ func destroy_children() -> void:
 static func process_child_instances(p_node : Node, p_dictionary : Dictionary, p_editor_interface : EditorInterface, p_this_script : Script, p_include_static_bodies : bool, p_bake_children : bool) -> Dictionary:
 	for child in p_node.get_children():
 		if child is MeshInstance and child.get_mesh() != null:
-			p_dictionary.mesh_instances.append(child)
+			p_dictionary["mesh_instances"].append(child)
 		elif child is StaticBody:
 			if p_include_static_bodies:
-				p_dictionary.static_bodies.append(child)
+				p_dictionary["static_bodies"].append(child)
 		else:
 			if p_bake_children:
 				# Ensure any other static baker groups children are baked
@@ -158,8 +158,8 @@ func combine_instances(p_editor_interface : EditorInterface) -> void:
 	var saved_mesh_instances : Array = []
 	var saved_static_bodies : Array = []
 	
-	var mesh_instances : Array = valid_instances.mesh_instances
-	var static_bodies : Array = valid_instances.static_bodies
+	var mesh_instances : Array = valid_instances["mesh_instances"]
+	var static_bodies : Array = valid_instances["static_bodies"]
 	
 	# Save all the valid mesh instances
 	for mesh_instance in mesh_instances:
