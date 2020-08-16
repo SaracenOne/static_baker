@@ -51,7 +51,13 @@ func edit(p_object) -> void:
 
 
 func _init() -> void:
-	print("Setting up Static Baker plugin")
+	print("Initialising StaticBaker plugin")
+
+
+func _notification(p_notification: int):
+	match p_notification:
+		NOTIFICATION_PREDELETE:
+			print("Destroying StaticBaker plugin")
 
 
 func _enter_tree() -> void:
